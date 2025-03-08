@@ -1,33 +1,58 @@
 <?php
 
-/*
- * By adding type hints and enabling strict type checking, code can become
- * easier to read, self-documenting and reduce the number of potential bugs.
- * By default, type declarations are non-strict, which means they will attempt
- * to change the original type to match the type specified by the
- * type-declaration.
- *
- * In other words, if you pass a string to a function requiring a float,
- * it will attempt to convert the string value to a float.
- *
- * To enable strict mode, a single declare directive must be placed at the top
- * of the file.
- * This means that the strictness of typing is configured on a per-file basis.
- * This directive not only affects the type declarations of parameters, but also
- * a function's return type.
- *
- * For more info review the Concept on strict type checking in the PHP track
- * <link>.
- *
- * To disable strict typing, comment out the directive below.
- */
-
 declare(strict_types=1);
 
 class ResistorColorTrio
 {
-    public function label(): string
+    private $colors;
+    private $unitConversions;
+
+    public function __construct()
     {
-        throw new \BadMethodCallException(sprintf('Implement the %s method', __FUNCTION__));
+        $this->colors = [
+            "black" => 0,
+            "brown" => 1,
+            "red" => 2,
+            "orange" => 3,
+            "yellow" => 4,
+            "green" => 5,
+            "blue" => 6,
+            "violet" => 7,
+            "grey" => 8,
+            "white" => 9
+        ];
+        $this->unitConversions = [
+            4 => ["kiloohms",3],
+            5 => ["kiloohms",3],
+            6 => ["kiloohms",3],
+            7 => ["megaohms",6],
+            8 => ["megaohms",6],
+            9 => ["megaohms",6],
+            10 => ["gigaohms",9],
+            11 => ["gigaohms",9],
+            12 => ["gigaohms",9],
+            13 => ["teraohms",12],
+            14 => ["teraohms",12],
+            15 => ["teraohms",12],
+        ];
+    }
+
+    public function label(array $resistorColors): string
+    {
+        $color1 = $this->colors[$resistorColors[0]] ?? null;
+        $color2 = $this->colors[$resistorColors[1]] ?? null;
+        $color3 = $this->colors[$resistorColors[2]] ?? null;
+
+        $number = intval($color1.$color2) * pow(10,$color3); // ej 200.000
+        
+        
+        $lenght = strlen(strval($number)); // longitud ej 4
+        $pow = $this->unitConversions[$lenght][1] ?? 0; // 4
+        $unit = $this->unitConversions[$lenght][0] ?? "ohms"; // ohms
+
+        $response = $number / pow(10,$pow);
+        return "{$response} $unit";
+   
+
     }
 }
