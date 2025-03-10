@@ -1,0 +1,27 @@
+{
+  "authors": [
+    "jrdnull"
+  ],
+  "contributors": [
+    "arueckauer",
+    "dkinzer",
+    "kunicmarko20",
+    "kytrinyx",
+    "lafent",
+    "petemcfarlane",
+    "tomasnorre"
+  ],
+  "files": {
+    "solution": [
+      "Clock.php"
+    ],
+    "test": [
+      "ClockTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Implement a clock that handles times without dates.",
+  "source": "Pairing session with Erin Drummond"
+}
