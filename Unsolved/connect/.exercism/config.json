@@ -1,0 +1,28 @@
+{
+  "authors": [
+    "pminten"
+  ],
+  "contributors": [
+    "arueckauer",
+    "dkinzer",
+    "karptonite",
+    "kunicmarko20",
+    "kytrinyx",
+    "lafent",
+    "petemcfarlane",
+    "tomasnorre",
+    "yisraeldov"
+  ],
+  "files": {
+    "solution": [
+      "Connect.php"
+    ],
+    "test": [
+      "ConnectTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Compute the result for a game of Hex / Polygon."
+}
