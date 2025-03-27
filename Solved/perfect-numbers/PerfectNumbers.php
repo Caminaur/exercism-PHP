@@ -10,10 +10,20 @@ function getClassification(int $number): string
 
     $aliquot_sum = 0;
    
-    // Aliquot sum
-    for ($i=1; $i < $number ; $i++) { 
+    $sqrt = floor(sqrt($number)); // sacamos la raiz cuadrada del numbero y redondeamos hacia abajo
+    
+    for ($i=1; $i <= $sqrt; $i++) { 
         if ($number % $i == 0) {
+
+            $pair = $number / $i;
             $aliquot_sum += $i;
+
+            // ej number = 36
+            //    i = 6
+            //    pair = 6
+            if ($pair != $i && $pair != $number) {
+                $aliquot_sum += $pair;
+            }
         }
     }
     
