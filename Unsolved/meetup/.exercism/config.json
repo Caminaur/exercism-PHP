@@ -1,0 +1,24 @@
+{
+  "authors": [
+    "camilopayan"
+  ],
+  "contributors": [
+    "arueckauer",
+    "kunicmarko20",
+    "kytrinyx",
+    "neenjaw"
+  ],
+  "files": {
+    "solution": [
+      "Meetup.php"
+    ],
+    "test": [
+      "MeetupTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Calculate the date of meetups.",
+  "source": "Jeremy Hinegardner mentioned a Boulder meetup that happens on the Wednesteenth of every month"
+}
