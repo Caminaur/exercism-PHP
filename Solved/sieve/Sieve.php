@@ -12,12 +12,10 @@ function sieve(int $number): array
 {
     $arr_numbers = range(1, $number);
     $values_to_remove = [1];
-
     foreach ($arr_numbers as $n) {
         if (in_array($n, $values_to_remove)) continue;
-
-        $multiplier = 2; // 1 2 3 4 ...
-        while (($n * $multiplier) <= $number) { // 4 6 8 10 12 14
+        $multiplier = 2;
+        while (($n * $multiplier) <= $number) {
             $values_to_remove[] = $n * $multiplier;
             $multiplier++;
         }
@@ -28,9 +26,3 @@ function sieve(int $number): array
     });
     return array_values($prime_numbers);
 }
-
-// array con numero hasta N
-// por cada numero === n
-    // set
-    // n*i < $number?
-        // set values_to_remove
