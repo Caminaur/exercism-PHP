@@ -1,30 +1,48 @@
 <?php
 
-/*
- * By adding type hints and enabling strict type checking, code can become
- * easier to read, self-documenting and reduce the number of potential bugs.
- * By default, type declarations are non-strict, which means they will attempt
- * to change the original type to match the type specified by the
- * type-declaration.
- *
- * In other words, if you pass a string to a function requiring a float,
- * it will attempt to convert the string value to a float.
- *
- * To enable strict mode, a single declare directive must be placed at the top
- * of the file.
- * This means that the strictness of typing is configured on a per-file basis.
- * This directive not only affects the type declarations of parameters, but also
- * a function's return type.
- *
- * For more info review the Concept on strict type checking in the PHP track
- * <link>.
- *
- * To disable strict typing, comment out the directive below.
- */
-
 declare(strict_types=1);
 
 function calculate(string $input): int
 {
-    throw new \BadFunctionCallException("Implement the calculate function");
+    preg_match_all('/-?\d+|[a-z]+(?: [a-z]+)?/i', $input, $matches);
+
+    $tokens = $matches[0];
+
+    if (empty($tokens)) throw new InvalidArgumentException("No valid input");
+
+    $response = (int)$tokens[1];
+
+    for ($i = 2; $i < count($tokens); $i += 2) {
+        $operator = $tokens[$i] ?? null;
+        $next_number = isset($tokens[$i + 1]) ? (int)$tokens[$i + 1] : null;
+
+        switch ($operator) {
+            case 'multiplied by':
+                $response *= $next_number;
+                break;
+            case 'divided by':
+                $response = $response / $next_number;
+                break;
+            case 'minus':
+                $response -= $next_number;
+                break;
+            case 'plus':
+                $response += $next_number;
+                break;
+            default:
+                throw new InvalidArgumentException("Invalid argument");
+        }
+    }
+
+    return $response;
 }
+
+# String con operaciones matematicas
+# Dividirlo en las operaciones  
+# tomar en cuenta multiplied by, minus, plus, divided by, etc. Como valid blocks
+
+# Evtl. REGEX 
+    # Take first number
+    # Take words between first number and second number 
+    # If longer continue until its over
+    # (-?\d+)(.*?)(-?\d+)
