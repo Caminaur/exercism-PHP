@@ -1,33 +1,44 @@
 <?php
 
-/*
- * By adding type hints and enabling strict type checking, code can become
- * easier to read, self-documenting and reduce the number of potential bugs.
- * By default, type declarations are non-strict, which means they will attempt
- * to change the original type to match the type specified by the
- * type-declaration.
- *
- * In other words, if you pass a string to a function requiring a float,
- * it will attempt to convert the string value to a float.
- *
- * To enable strict mode, a single declare directive must be placed at the top
- * of the file.
- * This means that the strictness of typing is configured on a per-file basis.
- * This directive not only affects the type declarations of parameters, but also
- * a function's return type.
- *
- * For more info review the Concept on strict type checking in the PHP track
- * <link>.
- *
- * To disable strict typing, comment out the directive below.
- */
-
 declare(strict_types=1);
 
 class ProteinTranslation
 {
-    public function getProteins()
+    private array $codon_map = [
+        'AUG' => 'Methionine',
+        'UUU' => 'Phenylalanine',
+        'UUC' => 'Phenylalanine',
+        'UUA' => 'Leucine',
+        'UUG' => 'Leucine',
+        'UCU' => 'Serine',
+        'UCC' => 'Serine',
+        'UCA' => 'Serine',
+        'UCG' => 'Serine',
+        'UAU' => 'Tyrosine',
+        'UAC' => 'Tyrosine',
+        'UGU' => 'Cysteine',
+        'UGC' => 'Cysteine',
+        'UGG' => 'Tryptophan',
+        'UAA' => 'STOP',
+        'UAG' => 'STOP',
+        'UGA' => 'STOP',
+    ];
+
+    public function getProteins(string $string): array
     {
-        throw new \BadMethodCallException(sprintf('Implement the %s method', __FUNCTION__));
+        $codons = str_split($string, 3);
+        $response = [];
+        foreach ($codons as $codon) {
+            $protein = $this->codon_map[$codon] ?? NULL;
+            if ($protein === NULL) throw new InvalidArgumentException('Invalid codon');
+            if ($protein === "STOP") return $response;
+            $response[] = $protein;
+        }
+        return $response;
     }
 }
+
+# split string in groups of 3
+# loop the array of the groups and add the valid proteins corresponding to the codon
+    # if a stop codon is found return the result
+    # if a invalid codon is given throw exception
