@@ -6,16 +6,17 @@ function raindrops(int $number): string
 {
     $response = "";
 
-    if ($number % 3 === 0) {
-        $response .= "Pling";
-    }
-    if ($number % 5 === 0) {
-        $response .= "Plang";
-    }
-    if ($number % 7 === 0) {
-        $response .= "Plong";
-    }
-    if (empty($response)) return (string) $number;
+    $map = [
+        3 => "Pling",
+        5 => "Plang",
+        7 => "Plong"
+    ];
 
-    return $response;
+    foreach ($map as $key => $sound) {
+        if ($number % $key === 0) {
+            $response .= $sound;
+        }
+    }
+
+    return empty($response) ? (string) $number : $response;
 }
