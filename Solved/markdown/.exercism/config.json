@@ -1,0 +1,22 @@
+{
+  "authors": [
+    "petemcfarlane"
+  ],
+  "contributors": [
+    "arueckauer",
+    "kytrinyx",
+    "yisraeldov"
+  ],
+  "files": {
+    "solution": [
+      "Markdown.php"
+    ],
+    "test": [
+      "MarkdownTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Refactor a Markdown parser"
+}
