@@ -28,7 +28,7 @@ class MarkdownTest extends PHPUnit\Framework\TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        require_once 'Markdown.php';
+        require_once 'Markdown_recursive.php';
     }
 
     public function testParsingParagraph(): void
