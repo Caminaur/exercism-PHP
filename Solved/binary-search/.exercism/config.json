@@ -1,0 +1,26 @@
+{
+  "authors": [
+    "arthurchipdean"
+  ],
+  "contributors": [
+    "arueckauer",
+    "kunicmarko20",
+    "kytrinyx",
+    "petemcfarlane",
+    "yisraeldov"
+  ],
+  "files": {
+    "solution": [
+      "BinarySearch.php"
+    ],
+    "test": [
+      "BinarySearchTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Implement a binary search algorithm.",
+  "source": "Wikipedia",
+  "source_url": "https://en.wikipedia.org/wiki/Binary_search_algorithm"
+}
