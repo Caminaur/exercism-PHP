@@ -38,7 +38,7 @@ class MatrixTest extends PHPUnit\Framework\TestCase
         $this->assertEquals([1], $matrix->getRow(1));
     }
 
-    public function testExtractRow999(): void
+    public function testExtractRow(): void
     {
         $matrix = new Matrix("1 2\n3 4");
 
