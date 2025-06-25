@@ -6,20 +6,19 @@ class Strain
 {
     public function keep(array $list, callable $predicate): array
     {
-        $response = [];
-        foreach ($list as $v) {
-            if ($predicate($v)) {
-                $response[] = $v;
-            }
-        }
-        return $response;
+        return $this->filterByPredicate($list, $predicate, true);
     }
 
     public function discard(array $list, callable $predicate): array
     {
+        return $this->filterByPredicate($list, $predicate, false);
+    }
+
+    private function filterByPredicate(array $list, callable $predicate, bool $shouldMatch)
+    {
         $response = [];
         foreach ($list as $v) {
-            if (!$predicate($v)) {
+            if ($predicate($v) === $shouldMatch) {
                 $response[] = $v;
             }
         }
