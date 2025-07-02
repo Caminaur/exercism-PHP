@@ -1,0 +1,26 @@
+{
+  "authors": [
+    "ecrmnn"
+  ],
+  "contributors": [
+    "arueckauer",
+    "kunicmarko20",
+    "kytrinyx",
+    "petemcfarlane",
+    "rossbearman"
+  ],
+  "files": {
+    "solution": [
+      "Pangram.php"
+    ],
+    "test": [
+      "PangramTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Determine if a sentence is a pangram.",
+  "source": "Wikipedia",
+  "source_url": "https://en.wikipedia.org/wiki/Pangram"
+}
