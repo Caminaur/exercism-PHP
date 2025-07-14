@@ -1,29 +1,24 @@
 <?php
 
-function getBestPrice(array $books): int
-{
-    $memo = [];
-    return computeBestPrice($books, $memo);
-}
 
-function computeBestPrice(array $books, array &$memo): int
+function computeBestPrice(array $books, array &$memo = []): int
 {
-    // Key una para las combinaciones
+    // Create a unique key 11210
     $key = implode('', $books);
 
-    // Si existe retornar la existente y evitar el calculo
+    // If we've already calculated the state, return result
     if (isset($memo[$key])) {
         return $memo[$key];
     }
 
-    // Si no hay libros retornar 0
+    // No books left
     if (array_sum($books) === 0) {
         return 0;
     }
 
     $minPrice = PHP_INT_MAX;
 
-    // precios en centavos
+    // Books groups Prices
     $prices = [
         1 => 800,
         2 => 1520,
@@ -32,50 +27,67 @@ function computeBestPrice(array $books, array &$memo): int
         5 => 3000,
     ];
 
-    $indices = availableIndexes($books); // [2,3,4]
-    $n = count($indices); // 3
+    // Get index of books that still have at least one copy
+    $available = [];
+    foreach ($books as $i => $count) {
+        if ($count > 0) {
+            $available[] = $i;
+        }
+    }
 
-    for ($groupSize = 1; $groupSize <= $n; $groupSize++) {
-        $combinations = combinations($indices, $groupSize);
-        foreach ($combinations as $combo) {
+    $n = count($available);
+
+    // Try forming groups from size 5 down to 1
+    for ($groupSize = min(5, $n); $groupSize >= 1; $groupSize--) {
+
+        // Generate all valid combinations of available books for this group size
+        $combos = generateCombinations($available, $groupSize);
+
+        foreach ($combos as $combo) {
+            // Clone the current book state
             $newBooks = $books;
+
+            // Remove one copy of each book in the selected combination
             foreach ($combo as $i) {
                 $newBooks[$i]--;
             }
+
+            // Recursively calculate the price for the remaining books
             $price = $prices[$groupSize] + computeBestPrice($newBooks, $memo);
+
+            // Keep the minimum total price found
             $minPrice = min($minPrice, $price);
         }
     }
 
+    // Store result in memo and return
     return $memo[$key] = $minPrice;
 }
 
-function availableIndexes($books)
-{
-    $indices = [];
-    foreach ($books as $index => $count) {
-        if ($count > 0) {
-            $indices[] = $index;
-        }
-    }
-    return $indices;
-}
-
-function combinations(array $elements, int $size): array
+/**
+ * Generates all combinations of the given elements of a specific size.
+ * Used to explore all valid groupings of different books.
+ *
+ * Example:
+ * generateCombinations([0,1,2], 2) => [[0,1], [0,2], [1,2]]
+ */
+function generateCombinations(array $elements, int $size): array
 {
     if ($size === 0) return [[]];
-    if (empty($elements)) return [];
+    if (count($elements) < $size) return [];
 
     $result = [];
-    $head = $elements[0];
-    $tail = array_slice($elements, 1);
 
-    foreach (combinations($tail, $size - 1) as $combo) {
-        array_unshift($combo, $head);
-        $result[] = $combo;
+    for ($i = 0; $i <= count($elements) - $size; $i++) {
+        $head = $elements[$i];
+        $tail = array_slice($elements, $i + 1);
+        foreach (generateCombinations($tail, $size - 1) as $combo) {
+            array_unshift($combo, $head);
+            $result[] = $combo;
+        }
     }
 
-    return array_merge($result, combinations($tail, $size));
+    return $result;
 }
 
 
@@ -91,5 +103,5 @@ function organizeItems($items): array
 function total(array $items): int
 {
     $booksByCategory = organizeItems($items);
-    return getBestPrice($booksByCategory);
+    return computeBestPrice($booksByCategory);
 }
