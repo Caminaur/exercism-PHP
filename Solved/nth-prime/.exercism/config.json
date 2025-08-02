@@ -1,0 +1,26 @@
+{
+  "authors": [
+    "arthurchipdean"
+  ],
+  "contributors": [
+    "arueckauer",
+    "kunicmarko20",
+    "kytrinyx",
+    "petemcfarlane",
+    "yisraeldov"
+  ],
+  "files": {
+    "solution": [
+      "NthPrime.php"
+    ],
+    "test": [
+      "NthPrimeTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Given a number n, determine what the nth prime is.",
+  "source": "A variation on Problem 7 at Project Euler",
+  "source_url": "https://projecteuler.net/problem=7"
+}
