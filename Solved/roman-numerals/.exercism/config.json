@@ -1,0 +1,27 @@
+{
+  "authors": [],
+  "contributors": [
+    "arueckauer",
+    "dkinzer",
+    "Dog",
+    "kunicmarko20",
+    "kytrinyx",
+    "lafent",
+    "petemcfarlane",
+    "zembrowski"
+  ],
+  "files": {
+    "solution": [
+      "RomanNumerals.php"
+    ],
+    "test": [
+      "RomanNumeralsTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Convert modern Arabic numbers into Roman numerals.",
+  "source": "The Roman Numeral Kata",
+  "source_url": "https://codingdojo.org/kata/RomanNumerals/"
+}
