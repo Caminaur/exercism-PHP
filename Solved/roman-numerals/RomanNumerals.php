@@ -3,71 +3,23 @@
 declare(strict_types=1);
 
 
-
-function resolverMiles($n)
-{
-    return str_repeat("M", (int)$n);
-}
-function resolverCientos($n)
+function resolve(int $n, ?string $symbol1, ?string $v2, ?string $v3): string
 {
     if ($n <= 3) {
-        return str_repeat("C", (int)$n);
+        return str_repeat($symbol1, (int)$n);
     }
     if ($n === 5) {
-        return "D";
+        return $v2;
     }
     if ($n === 4) {
-        $response = '';
-        return "CD";
+        return $symbol1 . $v2;
     }
     if ($n > 5 && $n < 9) {
-        $response = 'D' . str_repeat("C", $n - 5);
+        $response = $v2 . str_repeat($symbol1, $n - 5);
         return $response;
     }
 
-    // 900
-    return "CM";
-}
-function resolverDecenas($n)
-{
-    if ($n <= 3) {
-        return str_repeat("X", (int)$n);
-    }
-    if ($n === 5) {
-        return "L";
-    }
-    if ($n === 4) {
-        $response = '';
-        return "XL";
-    }
-    if ($n > 5 && $n < 9) {
-        $response = 'L' . str_repeat("X", $n - 5);
-        return $response;
-    }
-
-    // 90
-    return "XC";
-}
-
-function resolverUnDigito($n)
-{
-    if ($n <= 3) {
-        return str_repeat("I", (int)$n);
-    }
-    if ($n === 5) {
-        return "V";
-    }
-    if ($n === 4) {
-        $response = '';
-        return "IV";
-    }
-    if ($n > 5 && $n < 9) {
-        $response = 'V' . str_repeat("I", $n - 5);
-        return $response;
-    }
-
-    // 9
-    return "IX";
+    return $symbol1 . $v3;
 }
 
 function toRoman(int $number): string
@@ -79,29 +31,25 @@ function toRoman(int $number): string
     $firstDigit = count($split);
     for ($i = 1; $i <= count($split); $i++) {
         $n = (int)$split[$i - 1];
-        if ($firstDigit === 4) {
-            $response .= resolverMiles($n);
-            $firstDigit--;
-            continue;
-        }
-        if ($firstDigit === 3) {
-            $response .= resolverCientos($n);
-            $firstDigit--;
-            continue;
-        }
-        if ($firstDigit === 2) {
-            $response .= resolverDecenas($n);
-            $firstDigit--;
-            continue;
-        }
-        if ($firstDigit === 1) {
-            $response .= resolverUnDigito($n);
-            $firstDigit--;
-            continue;
+        switch ($firstDigit) {
+            case 4:
+                $response .= str_repeat("M", (int)$n);
+                $firstDigit--;
+                break;
+            case 3:
+                $response .= resolve($n, "C", "D", "M");
+                $firstDigit--;
+                break;
+            case 2:
+                $response .= resolve($n, "X", "L", "C");
+                $firstDigit--;
+                break;
+            default:
+                $response .= resolve($n, "I", "V", "X");
+                $firstDigit--;
+                break;
         }
     }
 
     return $response;
 }
-
-// 1024
