@@ -3,19 +3,21 @@
 
 function computeBestPrice(array $books, array &$memo = []): int
 {
-    // Create a unique key 11210
-    $key = implode('', $books);
-
-    // If we've already calculated the state, return result
-    if (isset($memo[$key])) {
-        return $memo[$key];
-    }
+    $books = normalize($books); // ensure normalized state
 
     // No books left
     if (array_sum($books) === 0) {
         return 0;
     }
 
+    // Create a unique key 11210
+    $key = implode('', $books);
+    // If we've already calculated the state, return result
+    if (isset($memo[$key])) {
+        return $memo[$key];
+    }
+
+    $n = count($books);
     $minPrice = PHP_INT_MAX;
 
     // Books groups Prices
@@ -27,37 +29,12 @@ function computeBestPrice(array $books, array &$memo = []): int
         5 => 3000,
     ];
 
-    // Get index of books that still have at least one copy
-    $available = [];
-    foreach ($books as $i => $count) {
-        if ($count > 0) {
-            $available[] = $i;
-        }
-    }
 
-    $n = count($available);
-
-    // Try forming groups from size 5 down to 1
-    for ($groupSize = min(5, $n); $groupSize >= 1; $groupSize--) {
-
-        // Generate all valid combinations of available books for this group size
-        $combos = generateCombinations($available, $groupSize);
-
-        foreach ($combos as $combo) {
-            // Clone the current book state
-            $newBooks = $books;
-
-            // Remove one copy of each book in the selected combination
-            foreach ($combo as $i) {
-                $newBooks[$i]--;
-            }
-
-            // Recursively calculate the price for the remaining books
-            $price = $prices[$groupSize] + computeBestPrice($newBooks, $memo);
-
-            // Keep the minimum total price found
-            $minPrice = min($minPrice, $price);
-        }
+    // Try forming groups from groupSize down to 1
+    for ($groupSize = $n; $groupSize >= 1; $groupSize--) {
+        $remaining = removeGroupOfSizeFrom($books, $groupSize);
+        $price = $prices[$groupSize] + computeBestPrice($remaining, $memo);
+        if ($price < $minPrice) $minPrice = $price;
     }
 
     // Store result in memo and return
@@ -65,32 +42,40 @@ function computeBestPrice(array $books, array &$memo = []): int
 }
 
 /**
- * Generates all combinations of the given elements of a specific size.
- * Used to explore all valid groupings of different books.
- *
- * Example:
- * generateCombinations([0,1,2], 2) => [[0,1], [0,2], [1,2]]
+ * Removes zeros and sorts descending to have a canonical state.
  */
-function generateCombinations(array $elements, int $size): array
+function normalize(array $books): array
 {
-    if ($size === 0) return [[]];
-    if (count($elements) < $size) return [];
+    // Step 1: remove all zero values
+    $filtered = array_filter($books, fn($x) => $x > 0);
+    // Step 2: reindex the array so keys start from 0
+    $books = array_values($filtered);
 
-    $result = [];
-
-    for ($i = 0; $i <= count($elements) - $size; $i++) {
-        $head = $elements[$i];
-        $tail = array_slice($elements, $i + 1);
-        foreach (generateCombinations($tail, $size - 1) as $combo) {
-            array_unshift($combo, $head);
-            $result[] = $combo;
-        }
-    }
-
-    return $result;
+    rsort($books, SORT_NUMERIC); // descending
+    return $books;
 }
 
+/**
+ * Subtracts 1 from the first $groupSize categories (since it's sorted desc),
+ * then normalizes.
+ */
+function removeGroupOfSizeFrom(array $books, int $groupSize): array
+{
+    for ($i = 0; $i < $groupSize; $i++) {
+        $books[$i]--;
+    }
+    return normalize($books);
+}
 
+/**
+ * Counts how many copies there are of each book in the input list.
+ * Returns an array where each value represents the number of copies
+ * of a specific title.
+ *
+ * Example:
+ * organizeItems([1,1,2,2,3,3,4,5])
+ * // Returns: [2,2,2,1,1]
+ */
 function organizeItems($items): array
 {
     $array = array_fill(1, 5, 0);
