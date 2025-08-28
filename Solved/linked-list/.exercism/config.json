@@ -1,0 +1,17 @@
+{
+  "authors": [
+    "MichaelBunker"
+  ],
+  "files": {
+    "solution": [
+      "LinkedList.php"
+    ],
+    "test": [
+      "LinkedListTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Implement a doubly linked list"
+}
