@@ -1,0 +1,21 @@
+{
+  "authors": [
+    "MichaelBunker"
+  ],
+  "contributors": [
+    "tomasnorre"
+  ],
+  "files": {
+    "solution": [
+      "BinarySearchTree.php"
+    ],
+    "test": [
+      "BinarySearchTreeTest.php"
+    ],
+    "example": [
+      ".meta/example.php"
+    ]
+  },
+  "blurb": "Insert and search for numbers in a binary tree.",
+  "source": "Josh Cheek"
+}
