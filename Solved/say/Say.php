@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function say(int $number): string
 {
-    if ($number == 0) {
+    if ($number === 0) {
         return "zero";
     }
     verifyEdgeCases($number);
@@ -13,13 +13,11 @@ function say(int $number): string
     $numberGroup = formatNumberArray((string)$number);
 
     foreach ($numberGroup as $key => $n) {
-        $length = strlen((string)$n);
-        if ($length == 3) {
+        if ($n === 0) continue;
+        if ($n >= 100) {
             $resp .= solveHundred($n) . ' ' . quantityGroup($key) . ' ';
         } else {
-            if ($n !== 0) {
-                $resp .= solveLastTwoDigits($n) . ' ' . quantityGroup($key) . ' ';
-            }
+            $resp .= solveLastTwoDigits($n) . ' ' . quantityGroup($key) . ' ';
         }
     }
     return trim($resp);
@@ -48,11 +46,10 @@ function verifyEdgeCases(int $number): void
 }
 function solveHundred(int $n): string
 {
+    $hundreds = intdiv($n, 100);
+    $lastTwo = $n % 100;
     $resp = '';
-    $groups = array_map(NULL, str_split((string)$n));
-    $first = $groups[0];
-    $lastTwo = intval($groups[1] . $groups[2]);
-    $resp .= solveLastTwoDigits((int)$first) . ' hundred';
+    $resp .= solveLastTwoDigits($hundreds) . ' hundred';
     $resp .= ' ' . solveLastTwoDigits($lastTwo);
     return $resp;
 }
@@ -61,7 +58,7 @@ function formatNumberArray(string $number): array
 {
     $resp = [];
     $numberArray = str_split(strrev($number), 3);
-    foreach ($numberArray as $key => $value) {
+    foreach ($numberArray as $value) {
         $resp[] = (int)strrev($value);
     }
     return array_reverse($resp, true);
@@ -70,18 +67,14 @@ function formatNumberArray(string $number): array
 function solveLastTwoDigits(int $n): string
 {
     $result = "";
-    if ($n < 21) {
-        return first20($n);
-    } else {
-        $firstDigit = (int)((string)$n)[0];
-        $secondDigit = (int)((string)$n)[1];
-        if ($secondDigit == 0) {
-            $result .= decenas($firstDigit);
-        } else {
-            $result .= decenas($firstDigit) . '-' . first20($secondDigit);
-        }
+    if ($n < 21) return first20($n);
+
+    $firstDigit = intdiv($n, 10);
+    $secondDigit = $n % 10;
+    if ($secondDigit == 0) {
+        return decenas($firstDigit);
     }
-    return $result;
+    return decenas($firstDigit) . '-' . first20($secondDigit);
 }
 function first20(int $n): string
 {
@@ -120,5 +113,6 @@ function decenas(int $n): string
         7 => "seventy",
         8 => "eighty",
         9 => "ninety",
+        default => "",
     };
 }
