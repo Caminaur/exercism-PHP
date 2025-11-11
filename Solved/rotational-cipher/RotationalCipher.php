@@ -43,7 +43,7 @@ class RotationalCipher
         return $response;
     }
 
-    private function rotateLetter(string $value, int $shift)
+    private function rotateLetter(string $value, int $shift): string
     {
         $isUpperCase = ctype_upper($value);
         $lowerValue = strtolower($value);
