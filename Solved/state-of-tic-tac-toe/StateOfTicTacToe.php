@@ -13,9 +13,7 @@ class StateOfTicTacToe
 {
     public function gameState(array $board): State
     {
-        if (!$this->verifyIfValid($board)) {
-            return throw new RuntimeException('Wrong turn order: O started');
-        }
+        $this->verifyIfValid($board);
 
         $didSomeOneWin = $this->verifyWinner($board);
         if ($didSomeOneWin) return State::Win;
@@ -23,12 +21,55 @@ class StateOfTicTacToe
         $isGameFinished = $this->verifyIfFinished($board);
         if ($isGameFinished) {
             return State::Draw;
-        } else {
-            return State::Ongoing;
         }
+        return State::Ongoing;
     }
 
     private function verifyIfFinished(array $board): bool
+    {
+        [$x, $o] = $this->getMoves($board);
+        return ($x + $o) === 9;
+    }
+
+
+    private function verifyWinner(array $board): bool
+    {
+        $isThereAWinner = false;
+        $winner = '';
+        $winnerByHorizontalLine = $this->verifyHorizontalLines($board);
+        if ($winnerByHorizontalLine !== NULL) {
+            $winner = $winnerByHorizontalLine;
+            $isThereAWinner = true;
+        }
+
+        $winnerByVerticalLine = $this->winnerByVerticalLines($board);
+        if ($winnerByVerticalLine !== NULL) {
+            $winner = $winnerByVerticalLine;
+            $isThereAWinner = true;
+        }
+
+        $winnerByDiagonalLines = $this->verifyDiagonalLines($board);
+        if ($winnerByDiagonalLines !== NULL) {
+            $winner = $winnerByDiagonalLines;
+            $isThereAWinner = true;
+        }
+
+        $this->verifyInconsistency($winner, $this->getMoves($board));
+
+        return $isThereAWinner;
+    }
+    private function verifyInconsistency(string $winner, array $arr): void
+    {
+        [$xMoves, $oMoves] = $arr;
+        if ($winner === "X" && $xMoves <= $oMoves) {
+            throw new RuntimeException("Impossible board: wrong move count for winner");
+        }
+        if ($winner === "O" && !($xMoves === $oMoves)) {
+            throw new RuntimeException("Impossible board: wrong move count for winner");
+        }
+    }
+
+    private function getMoves($board): array
     {
         $x = 0;
         $o = 0;
@@ -42,28 +83,10 @@ class StateOfTicTacToe
                 }
             }
         }
-        return ($x + $o) === 9;
+        return [$x, $o];
     }
 
-
-    private function verifyWinner(array $board): bool
-    {
-        $winnerByHorizontalLine = $this->verifyHorizontalLines($board);
-        // var_dump('winnerByHorizontalLine');
-        // var_dump($winnerByHorizontalLine);
-        if ($winnerByHorizontalLine) return true;
-        $winnerByVerticalLine = $this->winnerByVerticalLines($board);
-        // var_dump('winnerByVerticalLine');
-        // var_dump($winnerByHorizontalLine);
-        if ($winnerByVerticalLine) return true;
-        $winnerByDiagonalLines = $this->verifyDiagonalLines($board);
-        // var_dump('winnerByDiagonal');
-        // var_dump($winnerByDiagonalLines);
-        if ($winnerByDiagonalLines) return true;
-        return false;
-    }
-
-    private function verifyDiagonalLines(array $board): string|bool
+    private function verifyDiagonalLines(array $board): string|NULL
     {
         $x = 0;
         $o = 0;
@@ -79,8 +102,12 @@ class StateOfTicTacToe
                 $o++;
             }
         }
-        if ($x === 3 || $o === 3) {
-            return true;
+
+        if ($x === 3) {
+            return "X";
+        }
+        if ($o === 3) {
+            return "O";
         }
 
         $x = 0;
@@ -99,16 +126,18 @@ class StateOfTicTacToe
             }
         }
 
-        if ($x === 3 || $o === 3) {
-            return true;
+        if ($x === 3) {
+            return "X";
+        }
+        if ($o === 3) {
+            return "O";
         }
 
-        return false;
+        return NULL;
     }
-    private function winnerByVerticalLines(array $board): bool
+    private function winnerByVerticalLines(array $board): string|NULL
     {
-        $xWon = false;
-        $oWon = false;
+        $winner = NULL;
         for ($i = 0; $i < 3; $i++) {
             $x = 0;
             $o = 0;
@@ -121,26 +150,26 @@ class StateOfTicTacToe
                 }
             }
             if ($x === 3) {
-                $xWon = true;
+                if ($winner === "O") {
+                    throw new RuntimeException('Impossible board: game should have ended after the game was won');
+                }
+                $winner = "X";
             }
+
             if ($o === 3) {
-                $oWon = true;
+                if ($winner === "X") {
+                    throw new RuntimeException('Impossible board: game should have ended after the game was won');
+                }
+                $winner = "O";
             }
         }
 
-        if ($xWon && $oWon) {
-            return throw new RuntimeException('Impossible board: game should have ended after the game was won');
-        }
-        if ($xWon || $oWon) {
-            return true;
-        }
-        return false;
+        return $winner;
     }
 
-    private function verifyHorizontalLines(array $board): string|bool
+    private function verifyHorizontalLines(array $board): string|NULL
     {
-        $xWon = false;
-        $oWon = false;
+        $winner = NULL;
         foreach ($board as $line) {
             $x = 0;
             $o = 0;
@@ -153,23 +182,25 @@ class StateOfTicTacToe
                     $o++;
                 }
             }
+
             if ($x === 3) {
-                $xWon = true;
+                if ($winner === "O") {
+                    throw new RuntimeException('Impossible board: game should have ended after the game was won');
+                }
+                $winner = "X";
             }
+
             if ($o === 3) {
-                $oWon = true;
+                if ($winner === "X") {
+                    throw new RuntimeException('Impossible board: game should have ended after the game was won');
+                }
+                $winner = "O";
             }
         }
-        if ($xWon && $oWon) {
-            return throw new RuntimeException('Impossible board: game should have ended after the game was won');
-        }
-        if ($xWon || $oWon) {
-            return true;
-        }
-        return false;
+        return $winner;
     }
 
-    private function verifyIfValid(array $board): bool
+    private function verifyIfValid(array $board): void
     {
         $x = 0;
         $o = 0;
@@ -188,22 +219,14 @@ class StateOfTicTacToe
         $diff = $x - $o;
 
         if ($diff > 1) {
-            return throw new RuntimeException('Wrong turn order: X went twice');
+            throw new RuntimeException('Wrong turn order: X went twice');
         }
         if ($diff < 0) {
-            return throw new RuntimeException('Wrong turn order: O started');
-        }
-
-        // X nunca puede ir más de 1 jugada por delante de O
-        // y O nunca puede tener más jugadas que X
-        if ($diff < 0 || $diff > 1) {
-            return false;
+            throw new RuntimeException('Wrong turn order: O started');
         }
 
         if ($x > 5 || $o > 4) {
-            return false;
+            throw new RuntimeException('Exceeding the board');
         }
-
-        return true;
     }
 }
