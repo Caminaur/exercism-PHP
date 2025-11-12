@@ -380,4 +380,18 @@ class StateOfTicTacToeTest extends TestCase
         ];
         $this->stateOfTicTacToe->gameState($board);
     }
+
+    public function testImpossibleGameXWinsButMovesAreEqual(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Impossible board: wrong move count for winner');
+
+        $board = [
+            'XXX',
+            'XOO',
+            'OO '
+        ];
+
+        $this->stateOfTicTacToe->gameState($board);
+    }
 }
