@@ -6,28 +6,20 @@ class ListOps
 {
     public function append(array $list1, array $list2): array
     {
-        $resp = [];
-        foreach ($list1 as $v) {
-            $resp[] = $v;
-        }
         foreach ($list2 as $v) {
-            $resp[] = $v;
+            $list1[] = $v;
         }
-        return $resp;
+        return $list1;
     }
 
     public function concat(array $list1, array ...$listn): array
     {
-        $resp = [];
-        foreach ($list1 as $v) {
-            $resp[] = $v;
-        }
         foreach ($listn as $arr) {
             foreach ($arr as $v) {
-                $resp[] = $v;
+                $list1[] = $v;
             }
         }
-        return $resp;
+        return $list1;
     }
 
     /**
@@ -91,13 +83,8 @@ class ListOps
     public function reverse(array $list): array
     {
         $rev = [];
-
-        foreach ($list as $value) {
-            $tmp = [$value];
-            foreach ($rev as $v) {
-                $tmp[] = $v;
-            }
-            $rev = $tmp;
+        for ($i = $this->length($list) - 1; $i >= 0; $i--) {
+            $rev[] = $list[$i];
         }
         return $rev;
     }
