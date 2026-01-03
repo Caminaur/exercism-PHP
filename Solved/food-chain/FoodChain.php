@@ -14,14 +14,17 @@ class FoodChain
         7 => 'cow',
         8 => 'horse',
     ];
+    private const SPIDER_EXTRA_VERSE = " that wriggled and jiggled and tickled inside her.";
+    private const LAST_VERSE = "I don't know why she swallowed the fly. Perhaps she'll die.";
 
     public function verse(int $verseNumber): array
     {
-        $response = [];
         $animal = self::ANIMALS[$verseNumber];
 
-        $response[] = $this->getFirstVerse($animal);
-        $response[] = $this->getSecondVerse($animal);
+        $response = [
+            $this->getFirstVerse($animal),
+            $this->getSecondVerse($animal),
+        ];
 
         if ($verseNumber === 1 || $verseNumber === 8) {
             return $response;
@@ -31,28 +34,23 @@ class FoodChain
             $cAnimal = self::ANIMALS[$verseNumber];
             $pAnimal = self::ANIMALS[$verseNumber - 1];
 
-            $text = "She swallowed the " . $cAnimal . " to catch the " . $pAnimal;
+            $text = "She swallowed the {$cAnimal} to catch the {$pAnimal}";
 
-            if ($pAnimal === "spider") {
-                $text .= $this->getSpiderExtraVerse();
-            } else {
-                $text .= ".";
-            }
+            $text .= match ($pAnimal) {
+                "spider" => self::SPIDER_EXTRA_VERSE,
+                default => ".",
+            };
 
             $response[] = $text;
             $verseNumber--;
         }
-        $response[] = $this->getLastVerse();
+        $response[] = self::LAST_VERSE;
         return $response;
     }
 
     private function getFirstVerse(string $animal): string
     {
-        return "I know an old lady who swallowed a " . $animal . ".";
-    }
-    private function getLastVerse(): string
-    {
-        return "I don't know why she swallowed the fly. Perhaps she'll die.";
+        return "I know an old lady who swallowed a {$animal}.";
     }
     private function getSecondVerse(string $animal): string
     {
@@ -67,20 +65,12 @@ class FoodChain
             'horse'  => "She's dead, of course!",
         };
     }
-
-    private function getSpiderExtraVerse(): string
-    {
-        return " that wriggled and jiggled and tickled inside her.";
-    }
-
     public function verses(int $start, int $end): array
     {
         $response = [];
         for ($i = $start; $i <= $end; $i++) {
             $verse = $this->verse($i);
-            foreach ($verse as $line) {
-                $response[] = $line;
-            }
+            $response = array_merge($response, $verse);
             if ($i !== $end) {
                 $response[] = '';
             }
