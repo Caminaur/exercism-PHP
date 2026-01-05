@@ -7,7 +7,6 @@ class SpiralMatrix
     public function draw(int $n): array
     {
         $arr = [];
-        $finished = false;
 
         if ($n === 0) {
             return $arr;
@@ -16,16 +15,21 @@ class SpiralMatrix
             $arr[] = array_fill(0, $n, NULL);
         }
 
-        $direcction = 'RIGHT';
-        $currentLine = 0;
+
         $i = 0;
         $val = 1;
+        $currentLine = 0;
+        $direcction = 'RIGHT';
+        $finished = false;
+
         $arr[$currentLine][$i] = $val;
         while (!$finished) {
+            $canGoRight = array_key_exists($i + 1, $arr[$currentLine]) && $arr[$currentLine][$i + 1] === NULL;
+            $canGoDown = array_key_exists($currentLine + 1, $arr) && $arr[$currentLine + 1][$i] === NULL;
+            $canGoLeft = array_key_exists($i - 1, $arr[$currentLine]) && $arr[$currentLine][$i - 1] === NULL;
+            $canGoUp = array_key_exists($currentLine - 1, $arr) && $arr[$currentLine - 1][$i] === NULL;
             switch ($direcction) {
                 case 'RIGHT':
-                    $canGoRight = array_key_exists($i + 1, $arr[$currentLine]) && $arr[$currentLine][$i + 1] === NULL;
-                    $canGoDown = array_key_exists($currentLine + 1, $arr) && $arr[$currentLine + 1][$i] === NULL;
                     if ($canGoRight) {
                         $val++;
                         $i++;
@@ -37,8 +41,6 @@ class SpiralMatrix
                     }
                     break;
                 case 'DOWN':
-                    $canGoDown = array_key_exists($currentLine + 1, $arr) && $arr[$currentLine + 1][$i] === NULL;
-                    $canGoLeft = array_key_exists($i - 1, $arr[$currentLine]) && $arr[$currentLine][$i - 1] === NULL;
                     if ($canGoDown) {
                         $currentLine++;
                         $val++;
@@ -50,8 +52,6 @@ class SpiralMatrix
                     }
                     break;
                 case 'LEFT':
-                    $canGoLeft = array_key_exists($i - 1, $arr[$currentLine]) && $arr[$currentLine][$i - 1] === NULL;
-                    $canGoUp = array_key_exists($currentLine - 1, $arr) && $arr[$currentLine - 1][$i] === NULL;
                     if ($canGoLeft) {
                         $val++;
                         $arr[$currentLine][$i - 1] = $val;
@@ -63,8 +63,6 @@ class SpiralMatrix
                     }
                     break;
                 case 'UP':
-                    $canGoUp = array_key_exists($currentLine - 1, $arr) && $arr[$currentLine - 1][$i] === NULL;
-                    $canGoRight = array_key_exists($i + 1, $arr[$currentLine]) && $arr[$currentLine][$i + 1] === NULL;
                     if ($canGoUp) {
                         $val++;
                         $currentLine--;
