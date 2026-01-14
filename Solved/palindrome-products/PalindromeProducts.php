@@ -11,10 +11,13 @@ function smallest(int $min, int $max): array
     $factors = [];
     for ($i = $min; $i <= $max; $i++) {
         for ($q = $i; $q <= $max; $q++) {
-            $product = $i * $q;
 
             if ($i * $i > $smallestPalindrome) {
                 break 2;
+            }
+            $product = $i * $q;
+            if ($product > $smallestPalindrome) {
+                break;
             }
 
             if (isPalindrome($product)) {
@@ -54,6 +57,9 @@ function largest(int $min, int $max): array
             }
 
             $product = $i * $q;
+            if ($product < $largestPalindrome) {
+                break;
+            }
             if (isPalindrome($product)) {
                 $possibleFactors = $i >= $q ? [$q, $i] : [$i, $q];
                 if ($product > $largestPalindrome) {
