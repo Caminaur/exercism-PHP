@@ -1,88 +1,62 @@
 <?php
 
 declare(strict_types=1);
-
-/**
- * Buffer circular de capacidad fija usando un array fijo con punteros cabeza/cola.
- * Todas las operaciones son O(1) — no se mueven elementos, solo avanzan los punteros.
- */
 class CircularBuffer
 {
-    private array $buffer;   // Array de tamaño fijo; las posiciones se reutilizan en círculo
-    private int $capacidad;  // Capacidad máxima del buffer
-    private int $cabeza;     // Índice del próximo elemento a leer (el más antiguo)
-    private int $cola;       // Índice de la próxima posición libre para escribir
-    private int $cantidad;   // Número de elementos actualmente almacenados
+    private array $elementos;  // Cola dinámica; crece y encoge con cada write/read
+    private int $capacidad;    // Límite máximo de elementos permitidos
 
     public function __construct(int $capacidad)
     {
         $this->capacidad = $capacidad;
-        $this->buffer    = array_fill(0, $capacidad, null);
-        $this->cabeza    = 0;
-        $this->cola      = 0;
-        $this->cantidad  = 0;
+        $this->elementos = [];
     }
 
     /**
-     * Lee y elimina el elemento más antiguo del buffer (orden FIFO).
-     * Lanza BufferEmptyError si el buffer está vacío.
+     * Lee y elimina el elemento más antiguo (FIFO).
+     * array_shift() devuelve el primero y re-indexa el resto — O(n).
      */
     public function read(): mixed
     {
-        if ($this->cantidad === 0) {
+        if (empty($this->elementos)) {
             throw new BufferEmptyError();
         }
 
-        $elementoLeido = $this->buffer[$this->cabeza];
-
-        // Avanzamos la cabeza en círculo: cuando llega al final, vuelve al índice 0
-        $this->cabeza = ($this->cabeza + 1) % $this->capacidad;
-        $this->cantidad--;
-
-        return $elementoLeido;
+        return array_shift($this->elementos);
     }
 
     /**
-     * Escribe un nuevo elemento al final del buffer.
-     * Lanza BufferFullError si el buffer está lleno.
+     * Agrega un elemento al final de la cola.
+     * Lanza BufferFullError si ya se alcanzó la capacidad máxima.
      */
     public function write(mixed $item): void
     {
-        if ($this->cantidad === $this->capacidad) {
+        if (count($this->elementos) === $this->capacidad) {
             throw new BufferFullError($this->capacidad);
         }
 
-        $this->buffer[$this->cola] = $item;
-
-        // Avanzamos la cola en círculo
-        $this->cola = ($this->cola + 1) % $this->capacidad;
-        $this->cantidad++;
+        $this->elementos[] = $item;
     }
 
     /**
-     * Vacía el buffer completamente.
-     * Solo reseteamos los punteros; no hace falta limpiar el array.
+     * Vacía el buffer reemplazando el array por uno nuevo vacío.
      */
     public function clear(): void
     {
-        $this->cabeza   = 0;
-        $this->cola     = 0;
-        $this->cantidad = 0;
+        $this->elementos = [];
     }
 
     /**
-     * Escribe un elemento incluso si el buffer está lleno.
-     * Si está lleno, descarta el elemento más antiguo (avanza la cabeza) antes de escribir.
+     * Escribe aunque el buffer esté lleno.
+     * Si está lleno, descarta el elemento más antiguo antes de agregar el nuevo.
      */
     public function forceWrite(mixed $item): void
     {
-        if ($this->cantidad === $this->capacidad) {
-            // Descartamos el elemento más antiguo avanzando la cabeza sin leerlo
-            $this->cabeza = ($this->cabeza + 1) % $this->capacidad;
-            $this->cantidad--;
+        if (count($this->elementos) === $this->capacidad) {
+            array_shift($this->elementos);  // Elimina el más antiguo
         }
 
-        $this->write($item);
+        $this->elementos[] = $item;
     }
 }
 
